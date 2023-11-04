@@ -1,0 +1,3 @@
+- finish cochlea visualization
+- get training data (inputs and outputs)
+- train the model
