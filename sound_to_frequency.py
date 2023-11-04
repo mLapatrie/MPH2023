@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import pywt
 import librosa
 import os
+import pandas as pd
 
 
 def stimuli_to_bins(num_bins):
@@ -35,9 +36,6 @@ def stimuli_to_bins(num_bins):
 
 
 def wav_to_bins(filename, num_bins):
-    # Replace 'your_audio_file.wav' with the path to your audio file
-    filename = 'Dataset/stimuli/sub01_Tool9_Loc2_ramp10.wav'
-
     # Load the audio file with librosa
     samples, sample_rate = librosa.load(filename, sr=None)
 
@@ -60,4 +58,14 @@ def wav_to_bins(filename, num_bins):
                 
                 
     return bin_edges, total_amplitudes
-            
+
+
+def csv_big_sound()
+    big_sound = []
+    sounds = os.listdir('Dataset/stimuli/')
+    for s in sounds:
+        print(f'C:/Repos/Simulated-Auditory-Evoked-Hemodynamics/Dataset/stimuli/{s}')
+        big_sound.append(wav_to_bins(f'C:/Repos/Simulated-Auditory-Evoked-Hemodynamics/Dataset/stimuli/{s}', 127)[1])
+
+    df = pd.DataFrame(big_sound)
+    df.to_csv('big_sound.csv', index=False)
