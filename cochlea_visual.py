@@ -1,12 +1,21 @@
 import pygame
 from pygame.locals import *
+import colorsys
+import random
 
 import math
 
 w, h = 1280, 720
 
+#test variable
+a = 0
+
+bins = [0.25, 0.5, 0.75] #[random.random() for i in range(16)]
+bins = [random.random() for i in range(16)]
+print(bins)
+
 angularRatio = 0.001
-nPoints = 160
+nPoints = 500
 
 pygame.init()
 screen = pygame.display.set_mode((w, h), RESIZABLE)
@@ -16,8 +25,8 @@ clock = pygame.time.Clock()
 # todo: save score and best score, add start screen
 
 # graphics
-#sky_img = pygame.image.load("sky.png")
-#sky_img_size = sky_img.get_rect().size
+cochlea_img = pygame.image.load("cochlea_1.png")
+cochlea_img_size = cochlea_img.get_rect().size
 
 #font = pygame.font.Font("custom_font (2).ttf", 40)
 
@@ -32,6 +41,13 @@ def init_parameters():
 def draw_img(img, img_x, img_y, img_w, img_h):
 	screen.blit(pygame.transform.scale(img, (img_w, img_h)), (img_x, img_y))
 
+def clamp(v, minV, maxV):
+	if v < minV:
+		return minV
+	if v > maxV:
+		return maxV
+	return v
+
 init_parameters()
 
 running = True
@@ -42,17 +58,43 @@ while running:
 
 	screen.fill(pygame.Color(0, 0, 0))
 
-	# todo: add infinite sky
+	minDim = min(w, h)
+	maxDim = max(w, h)
 
-	#draw_img(sky_img, 0, 0, int(h*sky_img_size[0]/sky_img_size[1]), h)
+	# todo: add infinite sky
+	rendered_cochlea_min_dim = int(h*cochlea_img_size[0]/cochlea_img_size[1])
+	rendered_cochlea_min_dim = int(h*cochlea_img_size[0]/cochlea_img_size[1])
+	draw_img(cochlea_img, w/2-cochlea_img_size[0]/2, h/2-cochlea_img_size[1]/2, int(h*cochlea_img_size[0]/cochlea_img_size[1]), h)
 
 	w, h = pygame.display.get_surface().get_size()
 
-	minDim = min(w, h)
-	for i in range(nPoints):
-		x = w/2+math.cos(i/10)*i
-		y = h/2+math.sin(i/10)*i
-		pygame.draw.circle(screen, (255, 0, 0), (x, y), 5)
+
+
+	def draw_pattern(colorFunction, size):
+		for i in range(nPoints):
+			r = i/nPoints*minDim/2*0.75
+			theta = math.pi+i/nPoints*4*math.pi
+			x = int(w/2+math.cos(theta)*r)
+			y = int(h/2+math.sin(theta)*r)
+			color = colorFunction(i)
+			#print(color)
+			pygame.draw.circle(screen, color, (x, y), size)
+
+	def white_color_function(i):
+		return (255, 255, 255)
+	def black_color_function(i):
+		return (0, 0, 0)
+	def hsv_color_function(i):
+		ratio = i/nPoints
+		preciseBinPosition = (len(bins)-1/2)*ratio
+		binBeforeIndex = clamp(math.floor(preciseBinPosition), 0, len(bins)-1)
+		binAfterIndex = clamp(math.ceil(preciseBinPosition), 0, len(bins)-1)
+		normalizedIntensity = bins[binBeforeIndex]*(preciseBinPosition-binBeforeIndex)+bins[binAfterIndex]*(binAfterIndex-preciseBinPosition)
+		return colorsys.hsv_to_rgb((1-normalizedIntensity)*2/3,1,255)
+			
+	draw_pattern(white_color_function, 35)
+	draw_pattern(black_color_function, 25)
+	draw_pattern(hsv_color_function, 25)
 
 	# pygame.draw.rect(screen, "yellow", pygame.Rect(int(bird_x*w), int(bird_y*h), int(bird_w*h), int(bird_h*h)))
 
@@ -71,6 +113,8 @@ while running:
 	"""
 
 	clock.tick(60)
+	a += 0.0001
+	#print(a)
 
 
 pygame.quit()
