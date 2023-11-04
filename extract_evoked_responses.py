@@ -7,6 +7,7 @@ from scipy.ndimage import label
 import os
 
 
+NUM_BINS = 16
 common_labels = [1, 5, 6, 12, 13, 14, 15, 16, 17, 18, 21, 23, 24, 31, 32, 33, 34, 35, 37, 38, 39, 40, 48, 49, 50, 51, 53, 54, 62, 63, 64, 65, 67, 71, 73, 74, 76, 80, 81, 87, 88, 89, 90, 91, 92, 93, 96, 98, 99, 106, 107, 109, 110, 112, 113, 114, 115, 123, 124, 125, 126, 128, 129, 137, 138, 139, 140, 142, 146, 148, 149]
 
 def compute_fmri_data(fmri_filename):
@@ -42,22 +43,22 @@ def compute_fmri_data(fmri_filename):
     sampling_rate = 1 / repetition_time
     window = 10 # The number of timepoints for the average
     
-    evoked_responses = np.zeros((len(stimuli_df), len(common_labels)))
-    print(evoked_responses.shape)
+    data_object = []
     
     for index, stimulus in stimuli_df.iterrows():
         onset_time = float(str(stimulus).split(" ")[4].split("\\")[0])
         print(onset_time)
         onset_volume = int((onset_time + hemodynamic_delay) / repetition_time)
         end_volume = onset_volume + window
-        
+
         if end_volume > time_series.shape[0]:
             end_volume = time_series.shape[0]
             
         evoked_response = filtered_time_series[onset_volume:end_volume].mean(axis=0)
-        evoked_responses[index, :] = evoked_response
         
-    return evoked_responses
+        data_object.append(evoked_response)
+        
+    return data_object
     
 
 def filter_time_series(time_series, labels):
@@ -77,13 +78,17 @@ def find_common_labels(list_of_label_arrays):
         
     return common_labels
 
-
-for sub in range(1, 7):
+big_data = []
+for sub in range(1, 2):
     path = f"Dataset/sub-0{sub}/func/"
     runs = os.listdir(path)
     
     for run in runs:
         if ".nii.gz" in run:
             evoked_responses = compute_fmri_data(os.path.join(path, run))
-            run_num = run[-14:-12]
-            np.save(f"parsed_output_data/sub0{sub}_run{run_num}_evoked_responses.npy", evoked_responses)
+            for i in evoked_responses:
+                big_data.append(i)
+    
+    
+df = pd.DataFrame(big_data)
+df.to_csv('big_data.csv', index=False)
