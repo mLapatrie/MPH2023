@@ -60,12 +60,32 @@ def wav_to_bins(filename, num_bins):
     return bin_edges, total_amplitudes
 
 
-def csv_big_sound()
+def csv_big_sound():
     big_sound = []
     sounds = os.listdir('Dataset/stimuli/')
     for s in sounds:
         print(f'C:/Repos/Simulated-Auditory-Evoked-Hemodynamics/Dataset/stimuli/{s}')
-        big_sound.append(wav_to_bins(f'C:/Repos/Simulated-Auditory-Evoked-Hemodynamics/Dataset/stimuli/{s}', 127)[1])
+        big_sound.append(wav_to_bins(f'C:/Repos/Simulated-Auditory-Evoked-Hemodynamics/Dataset/stimuli/{s}', 16)[1])
 
     df = pd.DataFrame(big_sound)
     df.to_csv('big_sound.csv', index=False)
+    
+    
+big_sound = []
+for sub in range(1, 2):
+    path = f"Dataset/sub-0{sub}/func/"
+    runs = os.listdir(path)
+    
+    for run in runs:
+        if "events.tsv" in run:
+            # Load stimuli .tsv file
+            stimuli_df = pd.read_csv(os.path.join(path, run))
+            
+            for index, stimulus in stimuli_df.iterrows():
+                sound_name = str(stimulus).split(" ")[4].split("\\")[2].split('\n')[0][1:]
+                print(sound_name)
+                bin_edges, amplitudes = wav_to_bins(os.path.join("Dataset/stimuli/", sound_name), 16)
+                big_sound.append(amplitudes)
+            
+df = pd.DataFrame(big_sound)
+df.to_csv('big_sound.csv', index=False)

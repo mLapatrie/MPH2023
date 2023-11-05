@@ -31,6 +31,7 @@ def compute_fmri_data(fmri_filename):
                             verbose=5, resampling_target="data", interpolation="nearest")
     time_series = masker.fit_transform(fmri_img)
     print(time_series.shape)
+    print(masker.labels_)
     filtered_time_series = filter_time_series(time_series, masker.labels_)
     print(filtered_time_series.shape)
     
