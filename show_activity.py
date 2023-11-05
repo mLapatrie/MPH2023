@@ -18,21 +18,25 @@ def show_data(activation_values):
     display = plotting.plot_stat_map(masked_img, display_mode='ortho', cut_coords=[0, -70, 0], title='Destrieux Atlas Activation')
     return display
     
+
+def generate_frames(big_data):
+    # Load Destrieux atlas
+    atlas_destrieux = datasets.fetch_atlas_destrieux_2009(lateralized=True)
+    destrieux_atlas_img = image.load_img(atlas_destrieux.maps)
+    destrieux_labels = atlas_destrieux.labels
+
+    frame_dir = 'frames'
+    os.makedirs(frame_dir, exist_ok=True)
+
+    for i, activation_values in enumerate(big_data):
+        frame_path = os.path.join(frame_dir, f'frame_{i:04d}.png')
+        
+        display = show_data(activation_values)
+        display.savefig(frame_path)
+        display.close()
+        
+        print("DONE", i)
+
+
 big_data = np.array(pd.read_csv('big_data.csv'))
-
-# Load Destrieux atlas
-atlas_destrieux = datasets.fetch_atlas_destrieux_2009(lateralized=True)
-destrieux_atlas_img = image.load_img(atlas_destrieux.maps)
-destrieux_labels = atlas_destrieux.labels
-
-frame_dir = 'frames'
-os.makedirs(frame_dir, exist_ok=True)
-
-for i, activation_values in enumerate(big_data):
-    frame_path = os.path.join(frame_dir, f'frame_{i:04d}.png')
-    
-    display = show_data(activation_values)
-    display.savefig(frame_path)
-    display.close()
-    
-    print("DONE", i)
+generate_frames(big_data)
