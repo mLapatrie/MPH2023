@@ -26,11 +26,13 @@ class Net(nn.Module):
     def __init__(self):
         super(Net, self).__init__()
         self.main = nn.Sequential(
-            nn.Linear(input_array.shape[1], 25), # First fully connected layer
-            nn.GELU(),
-            nn.Linear(25, 50),
-            nn.GELU(),
-            nn.Linear(50, 75),
+            nn.Linear(input_array.shape[1], 50), # First fully connected layer
+            #nn.ReLU(),
+            nn.Linear(50, 100),
+            nn.ReLU(),
+            nn.Linear(100, 75),
+            #nn.ReLU(),
+            nn.Linear(75, 75),
             nn.Softmax(),
             nn.Linear(75, output_array.shape[1])  # Second fully connected layer
         )
@@ -40,7 +42,7 @@ class Net(nn.Module):
 
 
 net = Net()
-net.load_state_dict(torch.load("C:\\Users\\Adam\\Desktop\\personal projects\\0_mcgill_hackathon_2023\\Simulated-Auditory-Evoked-Hemodynamics\\checkpoints\\netG_epoch_20000.pth"))
+net.load_state_dict(torch.load("C:\\Users\\Adam\\Desktop\\personal projects\\0_mcgill_hackathon_2023\\Simulated-Auditory-Evoked-Hemodynamics\\checkpoints_2\\netG_epoch_100.pth"))
 net.eval()
 
 samples = input_array[np.random.choice(input_array.shape[0], size=5, replace=False)]
