@@ -135,7 +135,7 @@ def runLoop():
 			recording = sd.rec(int(sample_seconds * sample_rate), samplerate=sample_rate, channels=2)
 			sd.wait() # Wait until recording is finished
 			write(filename, sample_rate, recording)  # Save as WAV file
-		bins = wav_to_bins("C:\\Users\\Adam\\Desktop\\personal projects\\0_mcgill_hackathon_2023\\Simulated-Auditory-Evoked-Hemodynamics\\"+filename, 64)[1]
+		bins = wav_to_bins(filename, 64)[1]
 		bins = bins/max(bins)
 
 
@@ -161,3 +161,5 @@ def runLoop():
 
 
 	pygame.quit()
+
+runLoop()
