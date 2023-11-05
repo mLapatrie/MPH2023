@@ -85,7 +85,8 @@ for sub in range(1, 2):
                 sound_name = str(stimulus).split(" ")[4].split("\\")[2].split('\n')[0][1:]
                 print(sound_name)
                 bin_edges, amplitudes = wav_to_bins(os.path.join("Dataset/stimuli/", sound_name), 16)
-                big_sound.append(amplitudes)
+                normed_amplitudes = (amplitudes - amplitudes.min())/(amplitudes.max() - amplitudes.min())
+                big_sound.append(normed_amplitudes)
             
 df = pd.DataFrame(big_sound)
 df.to_csv('big_sound.csv', index=False)
