@@ -1,0 +1,1 @@
+ffmpeg -framerate 10 -i frame_%04d.jpg -i your_audio_file.mp3 -c:v libx264 -r 30 -pix_fmt yuv420p -c:a aac -strict experimental -b:a 192k -shortest output_video.mp4
