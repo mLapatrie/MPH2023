@@ -7,21 +7,12 @@ from scipy.io.wavfile import write
 import pywt
 import librosa
 import numpy as np
-import math
 
+import math
 
 from pydub import AudioSegment
 
-
-bin_edge = np.load('bin_edges.npy')
-
-
 w, h = 350, 350
-A = 165.4
-a = 2.1
-k = 0.88
-t_m = 5 * math.pi #theta max
-total_arc = (np.arcsinh(t_m) + t_m * np.sqrt((t_m) ** 2 + 1))/2
 
 nPoints = 500
 
@@ -81,26 +72,11 @@ def wav_to_bins(filename, num_bins):
                 
     return bin_edges, total_amplitudes
 
-def frequency_i(i):
-	ratio = i/nPoints
-	theta_i = ratio * 5 * math.pi
-	frequency = A * 10 ** (a/(2 * total_arc) * (np.arcsinh(theta_i) + theta_i * np.sqrt((theta_i) ** 2 + 1))) - k
-	return frequency
-
-def bin_i(i):
-
-	for index in range(1, len(bin_edge)):
-		if frequency_i(i) > 6500:
-			return 0
-		if frequency_i(i) <= bin_edge[index - 1] and frequency_i(i) >= bin_edge[index]:
-			return index
-
-
 
 def renderCochlea(bins, w, h):
 	def hsv_color_function(i):
-		#normalizedIntensity = bins[math.floor(ratio*len(bins))]
-		normalizedIntensity = bins[bin_i(i)]
+		ratio = (nPoints-i-1)/nPoints
+		normalizedIntensity = bins[math.floor(ratio*len(bins))]
 		#preciseBinPosition = (len(bins)-1/2)*ratio
 		#binBeforeIndex = clamp(math.floor(preciseBinPosition), 0, len(bins)-1)
 		#binAfterIndex = clamp(math.ceil(preciseBinPosition), 0, len(bins)-1)
