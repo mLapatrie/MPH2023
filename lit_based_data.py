@@ -21,6 +21,8 @@ def generate_one():
     
 data_fin = []
 for i in range(505):
-    data_fin.append(generate_one())
+    data = np.array(generate_one())
+    normed_data = 2*((data-data.min())/(data.max() - data.min()))-1
+    data_fin.append(normed_data)
     
 np.savetxt('big_data.csv', data_fin, delimiter=',')

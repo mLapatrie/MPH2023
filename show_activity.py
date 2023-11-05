@@ -15,7 +15,7 @@ def show_data(activation_values):
         
     masked_img = image.new_img_like(destrieux_atlas_img, masked_data)
 
-    display = plotting.plot_stat_map(masked_img, display_mode='ortho', cut_coords=[0, -70, 0], title='Destrieux Atlas Activation')
+    display = plotting.plot_stat_map(masked_img, display_mode='ortho', cut_coords=[0, -70, 0], title='Destrieux Atlas Activation', cmap='jet')
     return display
     
 # Load Destrieux atlas
@@ -38,6 +38,6 @@ def generate_frames(big_data):
         print("DONE", i)
 
 
-#big_data = np.array(pd.read_csv('big_data.csv'))
-big_data = np.load('big_data.npy')
+big_data = np.array(pd.read_csv('big_data.csv'))
+#big_data = np.load('big_data.npy')
 generate_frames(big_data)
