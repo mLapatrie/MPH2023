@@ -27,8 +27,9 @@ clock = pygame.time.Clock()
 
 #font = pygame.font.Font("custom_font (2).ttf", 40)
 
-
-space_was_pressed = False
+images_saved = 0
+counter = 0
+#space_was_pressed = False
 
 
 def init_parameters():
@@ -116,10 +117,15 @@ def renderCochlea(bins, w, h):
 	#font_img = font.render(str(score)+"/"+str(high_score), True, "white")
 	#screen.blit(font_img, (w/64, h/64))
 
+def saveImage():
+	global images_saved
+	pygame.image.save(screen, f"cochlea_frames\\frame_{images_saved:04d}.png")
+	images_saved += 1
+
 def runLoop():
+	global counter
 	init_parameters()
 	running = True
-	counter = 0
 	while running:
 		filename = 'output.wav'
 		sample_seconds = 1  # Duration of recording
