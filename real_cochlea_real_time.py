@@ -153,7 +153,7 @@ def runLoop():
 	init_parameters()
 	running = True
 	while running:
-		input_filename = 'freq_up.wav'
+		input_filename = 'intro_silence.wav'
 		output_filename = "output.wav"
 		newAudio = AudioSegment.from_wav(input_filename)
 		newAudio = newAudio[counter*100:(counter+1)*100] # 100 milliseconds for 10 frames per second

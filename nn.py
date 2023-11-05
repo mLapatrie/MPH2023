@@ -40,7 +40,7 @@ class Net(nn.Module):
     def forward(self, input):
         return self.main(input)
 
-
+"""
 net = Net()
 
 
@@ -78,6 +78,8 @@ plt.ylabel('loss')
 plt.title('loss over time')
 plt.grid(True)
 plt.show()
+
+"""
 
 """
 previous attempt below

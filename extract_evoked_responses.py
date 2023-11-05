@@ -8,8 +8,7 @@ import os
 
 
 threshold = 0.5
-NUM_BINS = 16
-common_labels = [17, 18, 33, 34, 49, 87, 92, 107, 109, 110, 124]
+common_labels = [1, 5, 6, 12, 13, 14, 15, 16, 17, 18, 21, 23, 24, 31, 32, 33, 34, 35, 37, 38, 39, 40, 48, 49, 50, 51, 53, 54, 62, 63, 64, 65, 67, 71, 73, 74, 76, 80, 81, 87, 88, 89, 90, 91, 92, 93, 96, 98, 99, 106, 107, 109, 110, 112, 113, 114, 115, 123, 124, 125, 126, 128, 129, 137, 138, 139, 140, 142, 146, 148, 149]
 
 def compute_fmri_data(fmri_filename):
     # Load fMRI data
@@ -44,15 +43,22 @@ def compute_fmri_data(fmri_filename):
     
     data_object = []
     
+    sounds_base = os.listdir('Dataset/stimuli')
     for index, stimulus in stimuli_df.iterrows():
         onset_time = float(str(stimulus).split(" ")[4].split("\\")[0])
         onset_volume = int((onset_time + hemodynamic_delay) / repetition_time)
         end_volume = onset_volume + window
 
+        sound_name = str(stimulus).split(" ")[4].split("\\")[2].split('\n')[0][1:]
+        
+        sound_index = sounds_base.index(sound_name)
+        
         if end_volume > time_series.shape[0]:
             end_volume = time_series.shape[0]
             
         evoked_response = filtered_time_series[onset_volume:end_volume].mean(axis=0)
+        
+        print(index, sound_index)
         
         data_object.append(evoked_response)
         
@@ -84,14 +90,10 @@ for sub in range(1, 2):
     
     do = True
     for run in runs:
-        if ".nii.gz" in run:
+        if "run-01_bold.nii.gz" in run or "run-02_bold.nii.gz" in run:
             evoked_responses = compute_fmri_data(os.path.join(path, run))
             for i in evoked_responses:
-                mean_i = i.mean()
-                
-                if mean_i > threshold:
-                    print("adding")
-                    big_data.append(i)
+                big_data.append(i)
     
     
 df = pd.DataFrame(big_data)
