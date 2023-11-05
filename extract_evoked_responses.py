@@ -7,8 +7,9 @@ from scipy.ndimage import label
 import os
 
 
+threshold = 0.5
 NUM_BINS = 16
-common_labels = [1, 5, 6, 12, 13, 14, 15, 16, 17, 18, 21, 23, 24, 31, 32, 33, 34, 35, 37, 38, 39, 40, 48, 49, 50, 51, 53, 54, 62, 63, 64, 65, 67, 71, 73, 74, 76, 80, 81, 87, 88, 89, 90, 91, 92, 93, 96, 98, 99, 106, 107, 109, 110, 112, 113, 114, 115, 123, 124, 125, 126, 128, 129, 137, 138, 139, 140, 142, 146, 148, 149]
+common_labels = [17, 18, 33, 34, 49, 87, 92, 107, 109, 110, 124]
 
 def compute_fmri_data(fmri_filename):
     # Load fMRI data
@@ -30,10 +31,7 @@ def compute_fmri_data(fmri_filename):
     masker = NiftiLabelsMasker(labels_img=resampled_atlas_img, standardize=True, memory="nilearn_cache", 
                             verbose=5, resampling_target="data", interpolation="nearest")
     time_series = masker.fit_transform(fmri_img)
-    print(time_series.shape)
-    print(masker.labels_)
     filtered_time_series = filter_time_series(time_series, masker.labels_)
-    print(filtered_time_series.shape)
     
     # Load stimuli .tsv file
     stimuli_df = pd.read_csv(fmri_filename[:-11] + "events.tsv")
@@ -48,7 +46,6 @@ def compute_fmri_data(fmri_filename):
     
     for index, stimulus in stimuli_df.iterrows():
         onset_time = float(str(stimulus).split(" ")[4].split("\\")[0])
-        print(onset_time)
         onset_volume = int((onset_time + hemodynamic_delay) / repetition_time)
         end_volume = onset_volume + window
 
@@ -79,16 +76,22 @@ def find_common_labels(list_of_label_arrays):
         
     return common_labels
 
+
 big_data = []
 for sub in range(1, 2):
     path = f"Dataset/sub-0{sub}/func/"
     runs = os.listdir(path)
     
+    do = True
     for run in runs:
         if ".nii.gz" in run:
             evoked_responses = compute_fmri_data(os.path.join(path, run))
             for i in evoked_responses:
-                big_data.append(i)
+                mean_i = i.mean()
+                
+                if mean_i > threshold:
+                    print("adding")
+                    big_data.append(i)
     
     
 df = pd.DataFrame(big_data)

@@ -18,12 +18,12 @@ def show_data(activation_values):
     display = plotting.plot_stat_map(masked_img, display_mode='ortho', cut_coords=[0, -70, 0], title='Destrieux Atlas Activation')
     return display
     
-
+# Load Destrieux atlas
+atlas_destrieux = datasets.fetch_atlas_destrieux_2009(lateralized=True)
+destrieux_atlas_img = image.load_img(atlas_destrieux.maps)
+destrieux_labels = atlas_destrieux.labels
 def generate_frames(big_data):
-    # Load Destrieux atlas
-    atlas_destrieux = datasets.fetch_atlas_destrieux_2009(lateralized=True)
-    destrieux_atlas_img = image.load_img(atlas_destrieux.maps)
-    destrieux_labels = atlas_destrieux.labels
+    
 
     frame_dir = 'frames'
     os.makedirs(frame_dir, exist_ok=True)
@@ -38,5 +38,6 @@ def generate_frames(big_data):
         print("DONE", i)
 
 
-big_data = np.array(pd.read_csv('big_data.csv'))
+#big_data = np.array(pd.read_csv('big_data.csv'))
+big_data = np.load('big_data.npy')
 generate_frames(big_data)
